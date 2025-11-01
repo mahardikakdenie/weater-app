@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:weather_app/screens/get_started_screen.dart';
 import 'package:weather_app/screens/login_or_guest_screen.dart';
 import 'package:weather_app/screens/my_home_page.dart';
@@ -9,7 +10,7 @@ import 'package:intl/date_symbol_data_local.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
 
   // Inisialisasi locale 'id_ID' untuk DateFormat
   await initializeDateFormatting('id_ID');

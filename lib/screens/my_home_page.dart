@@ -2,6 +2,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -259,7 +260,7 @@ class _MyHomePageWithStateState extends State<MyHomePageWithState> {
       final response = await WeatherService.fetchWeatherData(
         lat: useLat.toString(),
         lon: useLon.toString(),
-        apiKey: 'ea5e57629b00206a154c5eeb3dade93e',
+        apiKey: dotenv.env['FLUTTER_BASE_API_WEATER'] as String,
       );
 
       if (mounted) {
@@ -317,7 +318,7 @@ class _MyHomePageWithStateState extends State<MyHomePageWithState> {
       final response = await WeatherService.fetchForecastData(
         lat: useLat.toString(),
         lon: useLon.toString(),
-        apiKey: 'ea5e57629b00206a154c5eeb3dade93e',
+        apiKey: dotenv.env['FLUTTER_BASE_API_WEATER'] as String,
       );
 
       if (mounted) {
