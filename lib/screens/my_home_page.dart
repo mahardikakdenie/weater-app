@@ -503,6 +503,7 @@ class _MyHomePageWithStateState extends State<MyHomePageWithState> {
         children: [
           // === HOME SCREEN ===
           Container(
+            height: double.infinity,
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [Color(0xFF667EEA), Color(0xFF764BA2)],

@@ -26,3 +26,49 @@ List<ForecastListItem> filterTodayWeather(List<ForecastListItem> forecastList) {
 
   return filtered;
 }
+
+List<ForecastListItem> filterTomorrowWeather(ForecastResponse response) {
+  // Jika list null atau kosong, kembalikan list kosong
+  final items = response.list ?? [];
+  if (items.isEmpty) return [];
+
+  final now = DateTime.now();
+  final tomorrow = DateTime(now.year, now.month, now.day + 1);
+
+  return items.where((item) {
+    final itemDate = DateTime.fromMillisecondsSinceEpoch(item.dt * 1000);
+    return itemDate.day == tomorrow.day &&
+        itemDate.month == tomorrow.month &&
+        itemDate.year == tomorrow.year;
+  }).toList();
+}
+
+String getWeatherIconFromMain(String main) {
+  switch (main) {
+    case 'Clear':
+      return '☀️';
+    case 'Clouds':
+      return '☁️';
+    case 'Rain':
+    case 'Drizzle':
+      return '🌧️';
+    case 'Thunderstorm':
+      return '⛈️';
+    case 'Snow':
+      return '🌨️';
+    case 'Mist':
+    case 'Fog':
+    case 'Haze':
+    case 'Smoke':
+      return '🌫️';
+    default:
+      return '❓';
+  }
+}
+
+// Extension untuk capitalize
+extension StringExtension on String {
+  String capitalize() {
+    return isEmpty ? this : '${this[0].toUpperCase()}${substring(1)}';
+  }
+}
