@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const GetStartedScreen(),
         '/login': (context) => const LoginOrGuestScreen(),
-        '/home': (context) => const MyHomePage(title: 'Weather App'),
+        '/home': (context) => const MyHomePage(),
       },
     );
   }
