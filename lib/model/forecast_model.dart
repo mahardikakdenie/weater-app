@@ -80,16 +80,21 @@ class ForecastListItem {
   Map<String, dynamic> toJson() {
     return {
       'dt': dt,
-      'main': main,
-      'weather': weather.map((w) => w).toList(),
-      'clouds': clouds,
-      'wind': wind,
+      'main': main.toJson(), // ✅
+      'weather': weather.map((w) => w.toJson()).toList(), // ✅
+      'clouds': clouds.toJson(), // ✅
+      'wind': wind.toJson(), // ✅
       'visibility': visibility,
       'pop': pop,
-      'rain': rain,
-      'sys': sys,
+      'rain': rain?.toJson(), // ✅ (nullable)
+      'sys': sys.toJson(), // ✅
       'dt_txt': dtTxt,
     };
+  }
+
+  @override
+  String toString() {
+    return jsonEncode(toJson());
   }
 }
 
@@ -129,6 +134,20 @@ class Main {
       tempKf: json['temp_kf'].toDouble(),
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'temp': temp,
+      'feels_like': feelsLike,
+      'temp_min': tempMin,
+      'temp_max': tempMax,
+      'pressure': pressure,
+      'sea_level': seaLevel,
+      'grnd_level': grndLevel,
+      'humidity': humidity,
+      'temp_kf': tempKf,
+    };
+  }
 }
 
 class Weather {
@@ -152,6 +171,10 @@ class Weather {
       icon: json['icon'],
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {'id': id, 'main': main, 'description': description, 'icon': icon};
+  }
 }
 
 class Clouds {
@@ -161,6 +184,10 @@ class Clouds {
 
   factory Clouds.fromJson(Map<String, dynamic> json) {
     return Clouds(all: json['all']);
+  }
+
+  Map<String, dynamic> toJson() {
+    return {'all': all};
   }
 }
 
@@ -178,6 +205,10 @@ class Wind {
       gust: json['gust']?.toDouble(),
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {'speed': speed, 'deg': deg, 'gust': gust};
+  }
 }
 
 class Rain {
@@ -190,6 +221,10 @@ class Rain {
     final threeH = json['3h'];
     return Rain(threeHour: threeH?.toDouble());
   }
+
+  Map<String, dynamic> toJson() {
+    return {'3h': threeHour}; // Sesuai format API
+  }
 }
 
 class Sys {
@@ -199,6 +234,10 @@ class Sys {
 
   factory Sys.fromJson(Map<String, dynamic> json) {
     return Sys(pod: json['pod']);
+  }
+
+  Map<String, dynamic> toJson() {
+    return {'pod': pod};
   }
 }
 
