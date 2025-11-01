@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
+import 'package:weather_app/model/forecast_model.dart';
 import 'package:weather_app/model/weather_model.dart';
 import 'package:weather_app/repository/weather_repository.dart';
 import 'package:weather_app/screens/get_started_screen.dart';
@@ -218,6 +219,7 @@ class _MyHomePageWithStateState extends State<MyHomePageWithState> {
   late double _currentTemp = 0.0;
   late String _weatherCondition = "Memuat...";
   late WeatherResponse weather = WeatherResponse();
+  late ForecastResponse forecastResponse = ForecastResponse();
   late bool _isFavorite = false;
 
   List<String> _favoriteCities = ['Jakarta'];
@@ -273,6 +275,7 @@ class _MyHomePageWithStateState extends State<MyHomePageWithState> {
     _loadUserData();
     _loadFavoriteCities();
     _fetchWeather().then((_) => _checkIfFavorite());
+    _forecastWeather();
   }
 
   // ... semua fungsi dari MyHomePage asli (copy-paste di bawah)
@@ -343,6 +346,52 @@ class _MyHomePageWithStateState extends State<MyHomePageWithState> {
     }
   }
 
+  String getWeatherIcon(String main) {
+    switch (main) {
+      case 'Clear':
+        return '☀️';
+      case 'Clouds':
+        return '☁️';
+      case 'Rain':
+      case 'Drizzle':
+        return '🌧️';
+      case 'Thunderstorm':
+        return '⛈️';
+      case 'Snow':
+        return '🌨️';
+      case 'Mist':
+      case 'Fog':
+      case 'Haze':
+      case 'Smoke':
+        return '🌫️';
+      default:
+        return '❓';
+    }
+  }
+
+  Future<void> _forecastWeather({double? lat, double? lon}) async {
+    final useLat = lat ?? _currentLat;
+    final useLon = lon ?? _currentLon;
+    try {
+      final response = await WeatherRepository.getForecastWeather(
+        lat: useLat.toString(),
+        lon: useLon.toString(),
+        apiKey: 'ea5e57629b00206a154c5eeb3dade93e',
+      );
+
+      if (mounted) {
+        forecastResponse = response;
+      }
+    } catch (e) {
+      debugPrint('Error Forecast: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Gagal memuat cuaca: $e')));
+      }
+    }
+  }
+
   Future<void> _toggleFavorite() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
@@ -379,7 +428,7 @@ class _MyHomePageWithStateState extends State<MyHomePageWithState> {
       await docRef.set({
         'name': cityName,
         'country': weather.sys?.country ?? '',
-        'lat': _currentLat, // ✅ gunakan state terkini
+        'lat': _currentLat,
         'lon': _currentLon,
         "email": user.email,
         'addedAt': FieldValue.serverTimestamp(),
@@ -434,11 +483,13 @@ class _MyHomePageWithStateState extends State<MyHomePageWithState> {
     // Jika koordinat disediakan, fetch cuaca baru
     if (lat != null && lon != null) {
       _fetchWeather(lat: lat, lon: lon);
+      _forecastWeather(lat: lat, lon: lon);
     } else {
       // Cari koordinat dari daftar kota (fallback)
       final cityData = _getCityCoordinates(city);
       if (cityData != null) {
         _fetchWeather(lat: cityData['lat'], lon: cityData['lon']);
+        _forecastWeather(lat: cityData['lat'], lon: cityData['lon']);
       }
     }
   }
@@ -523,14 +574,18 @@ class _MyHomePageWithStateState extends State<MyHomePageWithState> {
     );
   }
 
-  String _formatTimestampToLocal(int? timestamp, int? timezoneOffset) {
+  String _formatTimestampToLocal(
+    int? timestamp,
+    int? timezoneOffset, {
+    String formatDate = 'dd MMMM yyyy, HH.mm',
+  }) {
     if (timestamp == null) return '–';
     final utc = DateTime.fromMillisecondsSinceEpoch(
       timestamp * 1000,
       isUtc: true,
     );
     final local = utc.add(Duration(seconds: timezoneOffset ?? 25200));
-    return DateFormat('dd MMMM yyyy, HH.mm', 'id_ID').format(local);
+    return DateFormat(formatDate, 'id_ID').format(local);
   }
 
   Widget _buildWeatherInfoCard({
@@ -662,10 +717,10 @@ class _MyHomePageWithStateState extends State<MyHomePageWithState> {
                                   ),
                                   const SizedBox(height: 16),
                                   Text(
-                                    _weatherCondition,
+                                    getWeatherIcon(_weatherCondition),
                                     style: const TextStyle(
                                       color: Colors.white,
-                                      fontSize: 18,
+                                      fontSize: 60,
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
@@ -718,14 +773,29 @@ class _MyHomePageWithStateState extends State<MyHomePageWithState> {
                                   height: 120,
                                   child: ListView.separated(
                                     scrollDirection: Axis.horizontal,
-                                    itemCount: 6,
+                                    itemCount:
+                                        forecastResponse.list?.take(6).length ??
+                                        0,
                                     separatorBuilder: (context, index) =>
                                         const SizedBox(width: 8),
                                     itemBuilder: (context, index) {
                                       final hour = {
-                                        "time": "0${5 + index}:00",
-                                        "icon": "☀️",
-                                        "temp": 20 + index,
+                                        "time": _formatTimestampToLocal(
+                                          forecastResponse.list?[index].dt,
+                                          25200,
+                                          formatDate: 'HH.mm',
+                                        ),
+                                        "icon": getWeatherIcon(
+                                          forecastResponse
+                                                  .list?[index]
+                                                  .weather[0]
+                                                  .main ??
+                                              '',
+                                        ),
+                                        "temp": forecastResponse
+                                            .list?[index]
+                                            .main
+                                            .temp,
                                       };
                                       return Container(
                                         width: 80,
