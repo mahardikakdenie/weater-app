@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:weather_app/model/favorite_city_model.dart';
@@ -89,6 +90,93 @@ class _MyHomePageWithStateState extends State<MyHomePageWithState> {
     _loadFavoriteCities();
     fetchFavorites();
     _getCurrentLocationThenWeather();
+    requestLocationPermission(context);
+  }
+
+  Future<bool> requestLocationPermission(BuildContext context) async {
+    // Cek status izin
+    var status = await Permission.location.status;
+
+    if (status.isGranted) {
+      return true;
+    }
+
+    // Minta izin pertama kali
+    final result = await Permission.location.request();
+
+    if (result.isGranted) {
+      return true;
+    }
+
+    // Jika ditolak (dan bukan "permanently denied")
+    if (result.isDenied) {
+      // Tampilkan dialog edukasi
+      await _showPermissionDeniedDialog(context);
+      return false;
+    }
+
+    // Jika "permanently denied" → arahkan ke pengaturan
+    if (result.isPermanentlyDenied) {
+      await _showOpenSettingsDialog(context);
+      return false;
+    }
+
+    return false;
+  }
+
+  // Dialog: Izin ditolak sementara
+  Future<void> _showPermissionDeniedDialog(BuildContext context) async {
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Izin Lokasi Dibutuhkan'),
+        content: const Text(
+          'Aplikasi ini membutuhkan akses lokasi untuk menampilkan cuaca di daerah Anda. '
+          'Silakan izinkan akses lokasi agar fitur ini berfungsi.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Nanti'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              requestLocationPermission(context); // coba lagi
+            },
+            child: const Text('Coba Lagi'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Dialog: Izin ditolak permanen → buka pengaturan
+  Future<void> _showOpenSettingsDialog(BuildContext context) async {
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Izin Lokasi Dinonaktifkan'),
+        content: const Text(
+          'Anda telah menonaktifkan izin lokasi secara permanen. '
+          'Silakan aktifkan manual di Pengaturan Aplikasi.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Batal'),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              // Buka pengaturan aplikasi
+              openAppSettings();
+            },
+            child: const Text('Buka Pengaturan'),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _getCurrentLocationThenWeather() async {

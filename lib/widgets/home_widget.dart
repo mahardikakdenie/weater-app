@@ -192,18 +192,72 @@ class HomeWidget extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 24),
-                SizedBox(
-                  height: 120,
-                  child: forecastLoading
-                      ? ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: 6,
-                          separatorBuilder: (context, index) =>
-                              const SizedBox(width: 8),
-                          itemBuilder: (context, index) {
-                            return Container(
-                              width: 80,
-                              padding: const EdgeInsets.all(8),
+                Padding(
+                  padding: const EdgeInsets.all(15),
+                  child: SizedBox(
+                    height: 120,
+                    child: forecastLoading
+                        ? ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: 6,
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(width: 8),
+                            itemBuilder: (context, index) {
+                              return Container(
+                                width: 80,
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      width: 24,
+                                      height: 24,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withValues(
+                                          alpha: 0.2,
+                                        ),
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Container(
+                                      width: 40,
+                                      height: 12,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withValues(
+                                          alpha: 0.2,
+                                        ),
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Container(
+                                      width: 30,
+                                      height: 16,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withValues(
+                                          alpha: 0.2,
+                                        ),
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                            physics: const BouncingScrollPhysics(),
+                          )
+                        : forecastList.isEmpty
+                        ? Center(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 12,
+                              ),
                               decoration: BoxDecoration(
                                 color: Colors.white.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(16),
@@ -211,131 +265,80 @@ class HomeWidget extends StatelessWidget {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Container(
-                                    width: 24,
-                                    height: 24,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withValues(
-                                        alpha: 0.2,
-                                      ),
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Container(
-                                    width: 40,
-                                    height: 12,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withValues(
-                                        alpha: 0.2,
-                                      ),
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Container(
-                                    width: 30,
-                                    height: 16,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withValues(
-                                        alpha: 0.2,
-                                      ),
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                          physics: const BouncingScrollPhysics(),
-                        )
-                      : forecastList.isEmpty
-                      ? Center(
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 24,
-                              vertical: 12,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.cloud_off,
-                                  color: Colors.white70,
-                                  size: 32,
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  'Tidak ada prakiraan cuaca',
-                                  style: TextStyle(
+                                  Icon(
+                                    Icons.cloud_off,
                                     color: Colors.white70,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
+                                    size: 32,
                                   ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            ),
-                          ),
-                        )
-                      : ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: forecastList.length,
-                          separatorBuilder: (context, index) =>
-                              const SizedBox(width: 8),
-                          itemBuilder: (context, index) {
-                            final hour = {
-                              "time": formatTimestampToLocal(
-                                forecastList[index].dt,
-                                25200,
-                                formatDate: 'HH.mm',
-                              ),
-                              "icon": getWeatherIcon(
-                                forecastList[index].weather[0].main,
-                              ),
-                              "temp": forecastList[index].main.temp,
-                            };
-                            return Container(
-                              width: 80,
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: .1),
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
+                                  const SizedBox(height: 8),
                                   Text(
-                                    hour['icon'] as String,
-                                    style: const TextStyle(fontSize: 24),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    hour['time'] as String,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12,
+                                    'Tidak ada prakiraan cuaca',
+                                    style: TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
                                     ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    '${hour['temp']}°',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                    textAlign: TextAlign.center,
                                   ),
                                 ],
                               ),
-                            );
-                          },
-                          physics: const BouncingScrollPhysics(),
-                        ),
+                            ),
+                          )
+                        : ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: forecastList.length,
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(width: 8),
+                            itemBuilder: (context, index) {
+                              final hour = {
+                                "time": formatTimestampToLocal(
+                                  forecastList[index].dt,
+                                  25200,
+                                  formatDate: 'HH.mm',
+                                ),
+                                "icon": getWeatherIcon(
+                                  forecastList[index].weather[0].main,
+                                ),
+                                "temp": forecastList[index].main.temp,
+                              };
+                              return Container(
+                                width: 80,
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: .1),
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      hour['icon'] as String,
+                                      style: const TextStyle(fontSize: 24),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      hour['time'] as String,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      '${hour['temp']}°',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                            physics: const BouncingScrollPhysics(),
+                          ),
+                  ),
                 ),
                 const SizedBox(height: 24),
                 // Tomorrow Forecast (hardcoded for now)
