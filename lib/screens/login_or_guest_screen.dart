@@ -1,3 +1,4 @@
+// lib/screens/login_or_guest_screen.dart
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -13,6 +14,7 @@ class LoginOrGuestScreen extends StatelessWidget {
 
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
+
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
@@ -22,40 +24,37 @@ class LoginOrGuestScreen extends StatelessWidget {
 
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('is_logged_in', true);
+      if (googleAuth.accessToken != null) {
+        await prefs.setString("token", googleAuth.accessToken!);
+      }
 
       if (!context.mounted) return;
       Navigator.pushReplacementNamed(context, '/home');
     } catch (e) {
       if (!context.mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Login gagal: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Login gagal: ${e.toString().split('(').first}'),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
     }
-  }
-
-  Future<void> _continueAsGuest(BuildContext context) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('is_logged_in', false);
-    await prefs.setString(
-      'guest_id',
-      DateTime.now().millisecondsSinceEpoch.toString(),
-    );
-
-    if (!context.mounted) return;
-    Navigator.pushReplacementNamed(context, '/home');
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor:
+          Colors.transparent, // Penting: hindari latar putih default
       body: Container(
         width: double.infinity,
+        height: double.infinity,
         decoration: BoxDecoration(
-          gradient: LinearGradient(
+          gradient: const LinearGradient(
             colors: [
-              const Color(0xFF4B0082), // Indigo
-              const Color(0xFF9932CC), // Dark Orchid
-              const Color(0xFFBA55D3), // Medium Orchid
+              Color(0xFF0F0C29), // Lebih gelap & modern
+              Color(0xFF302B63),
+              Color(0xFF24243E),
             ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
@@ -79,7 +78,7 @@ class LoginOrGuestScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 48),
 
-                // Login with Google
+                // 🔷 Login with Google — tetap emas, tapi dengan teks hitam yang jelas
                 ElevatedButton.icon(
                   onPressed: () => _signInWithGoogle(context),
                   icon: const Icon(Icons.login, color: Colors.black),
@@ -92,7 +91,7 @@ class LoginOrGuestScreen extends StatelessWidget {
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFFFD700), // Gold
+                    backgroundColor: const Color(0xFFFFD700), // Emas
                     padding: const EdgeInsets.symmetric(
                       horizontal: 32,
                       vertical: 16,
@@ -100,42 +99,20 @@ class LoginOrGuestScreen extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
-                    elevation: 4,
+                    elevation: 6,
+                    shadowColor: Colors.black54,
                   ),
                 ),
                 const SizedBox(height: 20),
 
-                // Continue as Guest
-                ElevatedButton.icon(
-                  onPressed: () => _continueAsGuest(context),
-                  icon: const Icon(Icons.person_outline, color: Colors.black),
-                  label: const Text(
-                    'Continue as Guest',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFFFD700).withValues(),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 32,
-                      vertical: 16,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    elevation: 2,
-                  ),
-                ),
-                const SizedBox(height: 32),
-
-                // Email login (optional)
+                // 🔸 Email login — teks putih lembut
                 TextButton(
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Email login coming soon')),
+                      const SnackBar(
+                        content: Text('Email login coming soon'),
+                        backgroundColor: Color(0xFF2A2D3E),
+                      ),
                     );
                   },
                   child: const Text(
@@ -144,6 +121,7 @@ class LoginOrGuestScreen extends StatelessWidget {
                       color: Colors.white70,
                       fontSize: 14,
                       decoration: TextDecoration.underline,
+                      decorationColor: Colors.white54,
                     ),
                   ),
                 ),
