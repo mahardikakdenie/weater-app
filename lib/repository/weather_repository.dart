@@ -24,7 +24,6 @@ class WeatherRepository {
 
       // Pastikan response.data adalah Map<String, dynamic>
       final weatherResponse = WeatherResponse.fromJson(response.data);
-      debugPrint("Parsed weather: $weatherResponse");
       return weatherResponse;
     } catch (e) {
       debugPrint("Error in WeatherRepository: $e");
