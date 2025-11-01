@@ -1,6 +1,5 @@
 import 'dart:developer';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 
 class DioWeatherClient {
   static final DioWeatherClient _instance = DioWeatherClient._internal();
@@ -36,8 +35,6 @@ class DioWeatherClient {
         onReceiveProgress: onReceiveProgress,
         options: Options(method: method),
       );
-
-      debugPrint("responses :");
 
       if (response.statusCode == 404) {
         log('@res: 404 Not found');

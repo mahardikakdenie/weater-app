@@ -15,7 +15,7 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
   @override
   void initState() {
     super.initState();
-    _checkExistingSession();
+    // _checkExistingSession();
   }
 
   Future<bool> isAccessTokenValid(String accessToken) async {
@@ -36,6 +36,8 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
     final googleSignIn = GoogleSignIn();
     final currentUser = googleSignIn.currentUser;
 
+    debugPrint("crr : $currentUser");
+
     if (currentUser != null) {
       try {
         final auth = await currentUser.authentication;
@@ -52,6 +54,13 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
         }
       } catch (e) {
         debugPrint("Auth error: $e");
+      }
+    } else {
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginOrGuestScreen()),
+        );
       }
     }
 
@@ -112,13 +121,8 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
               ),
               const SizedBox(height: 48),
               ElevatedButton(
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const LoginOrGuestScreen(),
-                    ),
-                  );
+                onPressed: () async {
+                  await _checkExistingSession();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFFFD700),

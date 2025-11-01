@@ -212,11 +212,6 @@ class _MyHomePageWithStateState extends State<MyHomePageWithState> {
         .map((doc) => FavoriteCity.fromMap(doc.id, doc.data()))
         .toList();
 
-    debugPrint("Jumlah favorit: ${favorites.length}");
-    for (var fav in favorites) {
-      debugPrint(" - $fav");
-    }
-
     setState(() {
       _savedFavoriteCities = favorites;
     });
@@ -247,7 +242,6 @@ class _MyHomePageWithStateState extends State<MyHomePageWithState> {
         .get();
 
     if (mounted) {
-      debugPrint("Cek favorit untuk: '$cityName', exists: ${doc.exists}");
       setState(() => _isFavorite = doc.exists);
     }
   }
