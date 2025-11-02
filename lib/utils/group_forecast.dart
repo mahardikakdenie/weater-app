@@ -7,10 +7,9 @@ List<ForecastDayGroup> groupForecastByDay(List<ForecastListItem> items) {
 
   Map<String, List<ForecastListItem>> grouped = {};
   for (var item in items) {
-    // Ambil tanggal dari dt (timestamp)
     final date = DateTime.fromMillisecondsSinceEpoch(
       item.dt * 1000,
-    ).toIso8601String().split('T')[0]; // "2025-04-05"
+    ).toIso8601String().split('T')[0];
 
     grouped.putIfAbsent(date, () => []).add(item);
   }
@@ -18,7 +17,7 @@ List<ForecastDayGroup> groupForecastByDay(List<ForecastListItem> items) {
   return grouped.entries
       .map((e) => ForecastDayGroup(date: e.key, items: e.value))
       .toList()
-      .sublist(0, 5); // Ambil maksimal 5 hari
+      .sublist(0, 5);
 }
 
 class ForecastDayGroup {

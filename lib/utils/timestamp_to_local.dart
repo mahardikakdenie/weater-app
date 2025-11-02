@@ -28,7 +28,6 @@ List<ForecastListItem> filterTodayWeather(List<ForecastListItem> forecastList) {
 }
 
 List<ForecastListItem> filterTomorrowWeather(ForecastResponse response) {
-  // Jika list null atau kosong, kembalikan list kosong
   final items = response.list ?? [];
   if (items.isEmpty) return [];
 
@@ -66,7 +65,6 @@ String getWeatherIconFromMain(String main) {
   }
 }
 
-// Extension untuk capitalize
 extension StringExtension on String {
   String capitalize() {
     return isEmpty ? this : '${this[0].toUpperCase()}${substring(1)}';

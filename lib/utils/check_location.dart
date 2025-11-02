@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
 Future<void> getCurrentLocation() async {
-  // Cek apakah izin lokasi sudah diberikan
   bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
   if (!serviceEnabled) {
-    // Lokasi dinonaktifkan di perangkat
     debugPrint('Layanan lokasi tidak aktif.');
     return;
   }
@@ -20,7 +18,6 @@ Future<void> getCurrentLocation() async {
   }
 
   if (permission == LocationPermission.deniedForever) {
-    debugPrint('Izin lokasi ditolak permanen. Buka pengaturan manual.');
     return;
   }
 
@@ -32,7 +29,6 @@ Future<void> getCurrentLocation() async {
       );
       debugPrint('Latitude: ${position.latitude}');
       debugPrint('Longitude: ${position.longitude}');
-      // Simpan atau gunakan lat/long sesuai kebutuhan
     } catch (e) {
       debugPrint('Error mendapatkan lokasi: $e');
     }

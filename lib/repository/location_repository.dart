@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:weather_app/model/location_model.dart';
 import 'package:weather_app/utils/dio_weather_client.dart';
 
@@ -17,8 +16,6 @@ class LocationRepository {
           'appid': "ea5e57629b00206a154c5eeb3dade93e",
         },
       );
-
-      debugPrint("resp : ${resp.data}");
 
       return (resp.data as List)
           .map(((res) => LocationModel.fromJson(res)))

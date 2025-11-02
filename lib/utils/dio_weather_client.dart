@@ -11,11 +11,8 @@ class DioWeatherClient {
       ..options.baseUrl = 'https://api.openweathermap.org/'
       ..options.followRedirects = false
       ..options.validateStatus = (status) => status != null && status < 500;
-    // ..options.headers = {'Content-Type': 'application/json'}
-    // ..interceptors.add(_defaultInterceptor);
   }
 
-  // Helper: buat request generik
   Future<Response> _request(
     String method,
     String path, {
@@ -105,6 +102,4 @@ class DioWeatherClient {
     queryParameters: queryParameters,
     cancelToken: cancelToken,
   );
-
-  // Jika butuh download nanti, bisa ditambahkan terpisah
 }

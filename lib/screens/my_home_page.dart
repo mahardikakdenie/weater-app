@@ -1,13 +1,15 @@
-// lib/screens/my_home_page.dart
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:weather_app/bloc/forecast/forecast_bloc.dart';
+import 'package:weather_app/bloc/forecast/forecast_event.dart';
+import 'package:weather_app/bloc/weather/weather_bloc.dart';
+import 'package:weather_app/bloc/weather/weather_event.dart';
 import 'package:weather_app/model/favorite_city_model.dart';
 import 'package:weather_app/model/forecast_model.dart';
 import 'package:weather_app/model/location_model.dart';
@@ -34,7 +36,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    // Inisialisasi dengan dummy, nanti diisi saat build
   }
 
   @override
@@ -68,13 +69,13 @@ class _MyHomePageWithStateState extends State<MyHomePageWithState> {
   String _userName = '';
   String? _userPhotoUrl;
   String _currentLocation = "Mengambil lokasi...";
-  late double _currentTemp = 0.0;
-  late String _weatherCondition = "Memuat...";
+  // late double _currentTemp = 0.0;
+  // late String _weatherCondition = "Memuat...";
   late WeatherResponse weather = WeatherResponse();
   late ForecastResponse forecastResponse = ForecastResponse();
   late bool _isFavorite = false;
   late List<ForecastListItem> forecastList = [];
-  bool _forecastLoading = true;
+  // bool _forecastLoading = true;
   late List<LocationModel> locations = [];
 
   List<String> _favoriteCities = [];
@@ -112,13 +113,19 @@ class _MyHomePageWithStateState extends State<MyHomePageWithState> {
     // Jika ditolak (dan bukan "permanently denied")
     if (result.isDenied) {
       // Tampilkan dialog edukasi
-      await _showPermissionDeniedDialog(context);
+      if (context.mounted) {
+        await _showPermissionDeniedDialog(context);
+      }
       return false;
     }
 
     // Jika "permanently denied" → arahkan ke pengaturan
     if (result.isPermanentlyDenied) {
-      await _showOpenSettingsDialog(context);
+      if (context.mounted) {
+        {
+          await _showOpenSettingsDialog(context);
+        }
+      }
       return false;
     }
 
@@ -187,11 +194,11 @@ class _MyHomePageWithStateState extends State<MyHomePageWithState> {
         _currentLat = position.latitude;
         _currentLon = position.longitude;
       });
-      await _fetchWeather().then((_) => _checkIfFavorite());
+      await _fetchWeather();
       await _forecastWeather();
     } catch (e) {
       debugPrint("Gagal ambil lokasi: $e");
-      await _fetchWeather().then((_) => _checkIfFavorite());
+      await _fetchWeather();
       await _forecastWeather();
     }
   }
@@ -217,61 +224,24 @@ class _MyHomePageWithStateState extends State<MyHomePageWithState> {
     });
   }
 
-  Future<void> _checkIfFavorite() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      if (mounted) setState(() => _isFavorite = false);
-      return;
-    }
-
-    String cityName = weather.name?.isNotEmpty == true
-        ? weather.name!
-        : _currentLocation.split(',').first.trim();
-
-    if (cityName.isEmpty ||
-        cityName == "fetching locations..." ||
-        cityName == "Unknown") {
-      cityName = "Jakarta";
-    }
-
-    final doc = await _firestore
-        .collection('users')
-        .doc(user.uid)
-        .collection('favorites')
-        .doc(cityName)
-        .get();
-
-    if (mounted) {
-      setState(() => _isFavorite = doc.exists);
-    }
-  }
-
   Future<void> _fetchWeather({double? lat, double? lon}) async {
     final useLat = lat ?? _currentLat;
     final useLon = lon ?? _currentLon;
 
     try {
-      final response = await WeatherService.fetchWeatherData(
-        lat: useLat.toString(),
-        lon: useLon.toString(),
-        apiKey: dotenv.env['FLUTTER_BASE_API_WEATER'] as String,
-      );
+      // final response = await WeatherService.fetchWeatherData(
+      //   lat: useLat.toString(),
+      //   lon: useLon.toString(),
+      //   apiKey: 'ea5e57629b00206a154c5eeb3dade93e',
+      // );
 
-      if (mounted) {
-        setState(() {
-          weather = response;
-          _currentLocation =
-              "${weather.name ?? 'Unknown'}, ${weather.sys?.country ?? ''}";
-          _currentTemp = weather.main?.temp ?? 0.0;
-          _currentLat = weather.coord?.lat ?? useLat;
-          _currentLon = weather.coord?.lon ?? useLon;
-          _weatherCondition = weather.weather?.isNotEmpty == true
-              ? weather.weather![0].main
-              : 'Clear';
-        });
-        // Cek favorit setelah cuaca dimuat
-        _checkIfFavorite();
-      }
+      context.read<WeatherBloc>().add(
+        SetWeatherData(
+          lat: useLat,
+          lon: useLon,
+          apiKey: dotenv.env['FLUTTER_BASE_API_WEATER'] as String,
+        ),
+      );
     } catch (e) {
       debugPrint('Error weather: $e');
       if (mounted) {
@@ -315,25 +285,34 @@ class _MyHomePageWithStateState extends State<MyHomePageWithState> {
         apiKey: dotenv.env['FLUTTER_BASE_API_WEATER'] as String,
       );
 
+      if (!mounted) return;
+      context.read<ForecastBloc>().add(
+        SetForecastData(
+          useLat,
+          useLon,
+          dotenv.env['FLUTTER_BASE_API_WEATER'] as String,
+        ),
+      );
+
       if (mounted) {
         forecastResponse = response;
         forecastList = filterTodayWeather(response.list ?? []);
-        _forecastLoading = false;
+        // _forecastLoading = false;
         setState(() {});
       }
     } catch (e) {
       debugPrint('Error Forecast: $e');
       if (mounted) {
-        _forecastLoading = false;
+        // _forecastLoading = false;
         setState(() {});
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Gagal memuat prakiraan: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to load Forecasting: $e')),
+        );
       }
     }
   }
 
-  Future<void> _toggleFavorite() async {
+  Future<void> _toggleFavorite({WeatherResponse? weatherData}) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -349,14 +328,14 @@ class _MyHomePageWithStateState extends State<MyHomePageWithState> {
     if (cityName.isEmpty ||
         cityName == "Mengambil lokasi..." ||
         cityName == "Unknown") {
-      cityName = "Jakarta";
+      cityName = "";
     }
 
     final docRef = _firestore
         .collection('users')
         .doc(user.uid)
         .collection('favorites')
-        .doc(cityName);
+        .doc(weatherData?.name);
 
     if (_isFavorite) {
       await docRef.delete();
@@ -366,13 +345,14 @@ class _MyHomePageWithStateState extends State<MyHomePageWithState> {
             .where((fav) => fav.name != cityName)
             .toList();
       });
-      if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Dihapus dari favorit: $cityName')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Dihapus dari favorit: ${weatherData?.name}')),
+        );
+      }
     } else {
       await docRef.set({
-        'name': cityName,
+        'name': weatherData?.name,
         'country': weather.sys?.country ?? '',
         'lat': _currentLat,
         'lon': _currentLon,
@@ -383,17 +363,20 @@ class _MyHomePageWithStateState extends State<MyHomePageWithState> {
         _savedFavoriteCities.add(
           FavoriteCity(
             id: docRef.id,
-            name: cityName,
+            name: weatherData?.name ?? '-',
             lat: _currentLat,
             lon: _currentLon,
           ),
         );
       });
       if (mounted) setState(() => _isFavorite = true);
-      if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Ditambahkan ke favorit: $cityName')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Ditambahkan ke favorit: ${weatherData?.name}'),
+          ),
+        );
+      }
     }
   }
 
@@ -511,15 +494,8 @@ class _MyHomePageWithStateState extends State<MyHomePageWithState> {
               child: HomeWidget(
                 userName: _userName,
                 userPhotoUrl: _userPhotoUrl,
-                currentLocation: _currentLocation,
-                currentTemp: _currentTemp,
-                weatherCondition: _weatherCondition,
-                weather: weather,
-                forecastList: forecastList,
-                forecastResponse: forecastResponse,
-                isFavorite: _isFavorite,
-                forecastLoading: _forecastLoading,
-                onToggleFavorite: _toggleFavorite,
+                onToggleFavorite: (data) async =>
+                    await _toggleFavorite(weatherData: data),
                 onLogout: _handleLogout,
               ),
             ),
@@ -531,6 +507,9 @@ class _MyHomePageWithStateState extends State<MyHomePageWithState> {
             savedFavorites: _savedFavoriteCities,
             onCitySelected: (city) {
               _setLocation(city.name as String, lat: city.lat, lon: city.lon);
+              setState(() {
+                locations = [];
+              });
               widget.onScreenChange(0);
             },
             onFavoriteSelected: (city) {
@@ -541,15 +520,19 @@ class _MyHomePageWithStateState extends State<MyHomePageWithState> {
             onAddFavorite: _addFavoriteCity,
             onRemoveCity: _removeCity,
             onSearch: (value) async {
-              debugPrint("value : $value");
-
-              var resp = await LocationRepository.getLocation(
-                search: value,
-                limit: "10",
-              );
-              setState(() {
-                locations = resp;
-              });
+              if (value.isNotEmpty) {
+                var resp = await LocationRepository.getLocation(
+                  search: value,
+                  limit: "10",
+                );
+                setState(() {
+                  locations = resp;
+                });
+              } else {
+                setState(() {
+                  locations = [];
+                });
+              }
             },
           ),
         ],

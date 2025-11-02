@@ -1,6 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:weather_app/bloc/forecast/forecast_bloc.dart';
+import 'package:weather_app/bloc/weather/weather_bloc.dart';
 import 'package:weather_app/screens/get_started_screen.dart';
 import 'package:weather_app/screens/login_or_guest_screen.dart';
 import 'package:weather_app/screens/my_home_page.dart';
@@ -14,7 +17,15 @@ void main() async {
 
   // Inisialisasi locale 'id_ID' untuk DateFormat
   await initializeDateFormatting('id_ID');
-  runApp(const MyApp());
+  runApp(
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => WeatherBloc()),
+        BlocProvider(create: (context) => ForecastBloc()),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
