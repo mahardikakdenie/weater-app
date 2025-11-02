@@ -72,7 +72,6 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // 🔲 Hilangkan background default (putih di light mode)
       backgroundColor: Colors.transparent,
       body: Container(
         width: double.infinity,
