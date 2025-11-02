@@ -1,7 +1,3 @@
-Berikut adalah **README.md** yang telah diperbarui dan disempurnakan berdasarkan struktur dan konten yang kamu berikan, dengan perbaikan tata bahasa, format Markdown yang konsisten, serta penyesuaian berdasarkan informasi dari OpenWeatherMap:
-
----
-
 # 🌤️ Weather App – Flutter + Firebase + BLoC
 
 A modern, responsive weather application built with **Flutter**, powered by the **OpenWeatherMap One Call API 3.0**, secured with **Firebase Authentication & Firestore**, and architected using the **BLoC pattern** for clean, scalable state management.
@@ -128,7 +124,3 @@ This project is licensed under the **MIT License** — see [LICENSE](LICENSE) fo
 
 > Made with ❤️ for weather enthusiasts and clean-code advocates.  
 > Designed to be **simple, fast, and privacy-respecting**.
-
---- 
-
-Jika kamu ingin menambahkan bagian seperti **Testing**, **Deployment**, atau **Contributing Guidelines**, beri tahu — saya siap bantu!
