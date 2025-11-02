@@ -22,7 +22,7 @@ import 'package:weather_app/widgets/weather_info_card.dart';
 class HomeWidget extends StatefulWidget {
   final String userName;
   final String? userPhotoUrl;
-  final Function(WeatherResponse) onToggleFavorite;
+  final Function(WeatherResponse, bool) onToggleFavorite;
   final VoidCallback onLogout;
 
   const HomeWidget({
@@ -153,26 +153,85 @@ class _HomeWidgetState extends State<HomeWidget> {
   }
 
   void _showLogoutDialog() {
-    showDialog(
+    showModalBottomSheet(
       context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: Colors.grey[800],
-        title: const Text('Konfirmasi'),
-        content: const Text('Apakah Anda yakin ingin keluar?'),
-        actions: [
-          TextButton(
-            onPressed: Navigator.of(context).pop,
-            child: const Text('Batal'),
+      backgroundColor:
+          Colors.transparent, // agar kita bisa kontrol radius & shadow
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Container(
+              color: const Color(
+                0xFF2D1B3A,
+              ), // Dark purple: sesuaikan sesuai selera
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      'Confirmation',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    const Text(
+                      'Are you sure want to logout',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 15, color: Colors.grey),
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            style: OutlinedButton.styleFrom(
+                              side: const BorderSide(color: Colors.grey),
+                              backgroundColor: Colors.transparent,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: const Text(
+                              'Cancel',
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              widget.onLogout();
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: const Text(
+                              'Logout',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              widget.onLogout();
-            },
-            child: const Text('Keluar', style: TextStyle(color: Colors.red)),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -261,6 +320,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                                       GestureDetector(
                                         onTap: () => widget.onToggleFavorite(
                                           weatherData,
+                                          _isFavorite,
                                         ),
                                         child: AnimatedScale(
                                           duration: const Duration(
@@ -570,7 +630,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                                       else
                                         const Center(
                                           child: Text(
-                                            'Data tidak tersedia',
+                                            'Data Not Found',
                                             style: TextStyle(
                                               color: Colors.white70,
                                             ),
