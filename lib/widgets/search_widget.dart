@@ -144,14 +144,21 @@ class _SearchScreenState extends State<SearchScreen> {
                     // );
                     return ListTile(
                       title: Text(
-                        "${city.name}, ${city.state}, ${city.state}",
+                        [city.name, city.state, city.country]
+                            .where(
+                              (part) => part != null && part.trim().isNotEmpty,
+                            )
+                            .join(', '),
                         style: const TextStyle(color: Colors.white),
                       ),
                       leading: Icon(
                         Icons.location_on,
                         color: const Color(0xFF5D5FEF),
                       ),
-                      onTap: () => widget.onCitySelected(city),
+                      onTap: () => {
+                        widget.onCitySelected(city),
+                        _searchController.text = '',
+                      },
                       trailing: IconButton(
                         icon: const Icon(Icons.add, color: Colors.green),
                         onPressed: () => widget.onAddCity(city),
