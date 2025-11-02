@@ -64,7 +64,24 @@ A modern, responsive weather application built with **Flutter**, powered by the 
 3. **Configure environment variables**  
    Create a `.env` file in the root directory:
    ```env
-   FLUTTER_BASE_API_WEATER=your_actual_api_key_here
+   FLUTTER_BASE_API_WEATER=
+   # .env
+   FIREBASE_API_KEY=
+   FIREBASE_APP_ID=
+   FIREBASE_MESSAGING_SENDER_ID=
+   FIREBASE_PROJECT_ID=
+   FIREBASE_AUTH_DOMAIN=
+   FIREBASE_STORAGE_BUCKET=
+   FIREBASE_MEASUREMENT_ID=
+
+   # Android
+   FIREBASE_ANDROID_API_KEY=
+   FIREBASE_ANDROID_APP_ID=
+
+   # iOS
+   FIREBASE_IOS_API_KEY=
+   FIREBASE_IOS_APP_ID=
+   FIREBASE_IOS_BUNDLE_ID=
    ```
 
 4. **Set up Firebase**
