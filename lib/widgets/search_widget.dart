@@ -63,7 +63,7 @@ class _SearchScreenState extends State<SearchScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: const Text(
-          'Cari Kota',
+          'Search City',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
@@ -74,10 +74,10 @@ class _SearchScreenState extends State<SearchScreen> {
           children: [
             TextField(
               controller: _searchController,
-              onChanged: _onSearchTextChanged, // <-- gunakan onChanged
+              onChanged: _onSearchTextChanged,
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
-                hintText: 'Cari kota...',
+                hintText: 'Search for a city...',
                 hintStyle: const TextStyle(color: Colors.white70),
                 prefixIcon: const Icon(Icons.search, color: Colors.white70),
                 border: OutlineInputBorder(
@@ -98,8 +98,8 @@ class _SearchScreenState extends State<SearchScreen> {
             const SizedBox(height: 16),
             Text(
               widget.filteredCities.isEmpty
-                  ? 'Lokasi Favorit'
-                  : "Hasil Pencarian",
+                  ? 'Favorite Locations'
+                  : "Search Results",
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.w600,
@@ -171,7 +171,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     Image.asset('assets/building.png', width: 200, height: 200),
                     const SizedBox(height: 20),
                     const Text(
-                      'Ketik nama kota untuk mencari...',
+                      'Type a city name to search...',
                       style: TextStyle(color: Colors.white70),
                     ),
                   ],
