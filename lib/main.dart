@@ -7,15 +7,14 @@ import 'package:weather_app/bloc/weather/weather_bloc.dart';
 import 'package:weather_app/screens/get_started_screen.dart';
 import 'package:weather_app/screens/login_or_guest_screen.dart';
 import 'package:weather_app/screens/my_home_page.dart';
+import 'package:weather_app/screens/splash_screen.dart';
 import 'firebase_options.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await dotenv.load(fileName: ".env");
-
-  // Inisialisasi locale 'id_ID' untuk DateFormat
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await initializeDateFormatting('id_ID');
   runApp(
     MultiBlocProvider(
@@ -42,7 +41,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: '/', // ← Mulai dari route '/'
       routes: {
-        '/': (context) => const GetStartedScreen(),
+        '/': (context) => const SplashScreen(),
+        '/get-started': (context) => const GetStartedScreen(),
         '/login': (context) => const LoginOrGuestScreen(),
         '/home': (context) => const MyHomePage(),
       },
