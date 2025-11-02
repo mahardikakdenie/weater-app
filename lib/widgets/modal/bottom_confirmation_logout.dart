@@ -11,7 +11,7 @@ class BottomConfirmationLogout extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(20),
         child: Container(
-          color: const Color(0xFF2D1B3A), // Dark purple
+          color: const Color(0xFF2D1B3A),
           child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
