@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      initialRoute: '/', // ← Mulai dari route '/'
+      initialRoute: '/',
       routes: {
         '/': (context) => const SplashScreen(),
         '/get-started': (context) => const GetStartedScreen(),
