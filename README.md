@@ -66,7 +66,7 @@ A modern, responsive weather application built with **Flutter**, powered by the 
 3. **Configure environment variables**  
    Create a `.env` file in the root directory:
    ```env
-   OPENWEATHER_API_KEY=your_actual_api_key_here
+   FLUTTER_BASE_API_WEATER=your_actual_api_key_here
    ```
 
 4. **Set up Firebase**
