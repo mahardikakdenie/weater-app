@@ -114,7 +114,7 @@ class _HomeWidgetState extends State<HomeWidget> {
             Icon(Icons.cloud_off, color: Colors.white70, size: 32),
             const SizedBox(height: 8),
             Text(
-              'Tidak ada prakiraan cuaca',
+              'No weather forecast available',
               style: TextStyle(
                 color: Colors.white70,
                 fontSize: 14,
@@ -155,17 +155,14 @@ class _HomeWidgetState extends State<HomeWidget> {
   void _showLogoutDialog() {
     showModalBottomSheet(
       context: context,
-      backgroundColor:
-          Colors.transparent, // agar kita bisa kontrol radius & shadow
+      backgroundColor: Colors.transparent,
       builder: (context) {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: Container(
-              color: const Color(
-                0xFF2D1B3A,
-              ), // Dark purple: sesuaikan sesuai selera
+              color: const Color(0xFF2D1B3A), // Dark purple
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
@@ -181,7 +178,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                     ),
                     const SizedBox(height: 12),
                     const Text(
-                      'Are you sure want to logout',
+                      'Are you sure you want to log out?',
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 15, color: Colors.grey),
                     ),
@@ -529,7 +526,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        "Tomorrow Detail",
+                                        "Tomorrow's Details",
                                         style: const TextStyle(
                                           color: Colors.white,
                                           fontSize: 18,
@@ -634,7 +631,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                                       else
                                         const Center(
                                           child: Text(
-                                            'Data Not Found',
+                                            'Data not found',
                                             style: TextStyle(
                                               color: Colors.white70,
                                             ),
@@ -679,7 +676,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Halo, ${widget.userName}!',
+                    'Hello, ${widget.userName}!',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
@@ -715,10 +712,3 @@ class _HomeWidgetState extends State<HomeWidget> {
     );
   }
 }
-
-// extension StringExtension on String {
-//   String capitalize() {
-//     if (isEmpty) return this;
-//     return '${this[0].toUpperCase()}${substring(1)}';
-//   }
-// }
