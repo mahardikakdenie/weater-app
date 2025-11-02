@@ -16,7 +16,10 @@ import 'package:weather_app/model/weather_model.dart' hide Wind;
 import 'package:weather_app/utils/timestamp_to_local.dart';
 import 'package:weather_app/widgets/avatar_widget.dart';
 import 'package:weather_app/widgets/box_weather_loading.dart';
+import 'package:weather_app/widgets/empty_forecast.dart';
 import 'package:weather_app/widgets/grid_loading.dart';
+import 'package:weather_app/widgets/modal/bottom_confirmation_logout.dart';
+import 'package:weather_app/widgets/tomorrow_detail.dart';
 import 'package:weather_app/widgets/weather_info_card.dart';
 
 class HomeWidget extends StatefulWidget {
@@ -38,29 +41,6 @@ class HomeWidget extends StatefulWidget {
 }
 
 class _HomeWidgetState extends State<HomeWidget> {
-  String getWeatherIcon(String main) {
-    switch (main) {
-      case 'Clear':
-        return '☀️';
-      case 'Clouds':
-        return '☁️';
-      case 'Rain':
-      case 'Drizzle':
-        return '🌧️';
-      case 'Thunderstorm':
-        return '⛈️';
-      case 'Snow':
-        return '🌨️';
-      case 'Mist':
-      case 'Fog':
-      case 'Haze':
-      case 'Smoke':
-        return '🌫️';
-      default:
-        return '❓';
-    }
-  }
-
   List<ForecastListItem> filterTomorrowWeather(ForecastResponse response) {
     final now = DateTime.now();
     final tomorrow = DateTime(now.year, now.month, now.day + 1);
@@ -100,134 +80,12 @@ class _HomeWidgetState extends State<HomeWidget> {
     }
   }
 
-  Widget _buildEmptyForecast() {
-    return Center(
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.cloud_off, color: Colors.white70, size: 32),
-            const SizedBox(height: 8),
-            Text(
-              'No weather forecast available',
-              style: TextStyle(
-                color: Colors.white70,
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDetailRow(IconData icon, String label, String value) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, size: 18, color: Colors.white70),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 2),
-        Text(
-          label,
-          style: const TextStyle(color: Colors.white70, fontSize: 10),
-          textAlign: TextAlign.center,
-        ),
-      ],
-    );
-  }
-
   void _showLogoutDialog() {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
       builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: Container(
-              color: const Color(0xFF2D1B3A), // Dark purple
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text(
-                      'Confirmation',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    const Text(
-                      'Are you sure you want to log out?',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 15, color: Colors.grey),
-                    ),
-                    const SizedBox(height: 20),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: OutlinedButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            style: OutlinedButton.styleFrom(
-                              side: const BorderSide(color: Colors.grey),
-                              backgroundColor: Colors.transparent,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                            child: const Text(
-                              'Cancel',
-                              style: TextStyle(color: Colors.grey),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                              widget.onLogout();
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                            child: const Text(
-                              'Logout',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
+        return BottomConfirmationLogout(onLogout: widget.onLogout);
       },
     );
   }
@@ -349,7 +207,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                                   ),
                                   const SizedBox(height: 12),
                                   Text(
-                                    getWeatherIcon(iconData),
+                                    getWeatherIconFromMain(iconData),
                                     style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 56,
@@ -408,7 +266,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                         if (state is ForecastLoaded) {
                           final forecastList = state.data.list ?? [];
                           if (forecastList.isEmpty) {
-                            return _buildEmptyForecast();
+                            return EmptyForecast();
                           }
 
                           return Stack(
@@ -444,7 +302,9 @@ class _HomeWidgetState extends State<HomeWidget> {
                                           MainAxisAlignment.center,
                                       children: [
                                         Text(
-                                          getWeatherIcon(item.weather[0].main),
+                                          getWeatherIconFromMain(
+                                            item.weather[0].main,
+                                          ),
                                           style: const TextStyle(fontSize: 22),
                                         ),
                                         const SizedBox(height: 4),
@@ -541,7 +401,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                                               MainAxisAlignment.center,
                                           children: [
                                             Text(
-                                              getWeatherIcon(
+                                              getWeatherIconFromMain(
                                                 tomorrowList
                                                     .first
                                                     .weather[0]
@@ -606,25 +466,29 @@ class _HomeWidgetState extends State<HomeWidget> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceEvenly,
                                           children: [
-                                            _buildDetailRow(
-                                              Icons.thermostat,
-                                              'Feels Like',
-                                              '${tomorrowList.first.main.feelsLike.toInt()}°',
+                                            TomorrowDetail(
+                                              icon: Icons.thermostat,
+                                              label: 'Feels Like',
+                                              value:
+                                                  '${tomorrowList.first.main.feelsLike.toInt()}°',
                                             ),
-                                            _buildDetailRow(
-                                              Icons.remove_red_eye,
-                                              'Visibility',
-                                              '${(tomorrowList.first.visibility) ~/ 1000} km',
+                                            TomorrowDetail(
+                                              icon: Icons.remove_red_eye,
+                                              label: 'Visibility',
+                                              value:
+                                                  '${(tomorrowList.first.visibility) ~/ 1000} km',
                                             ),
-                                            _buildDetailRow(
-                                              Icons.cloud,
-                                              'Cloud Cover',
-                                              '${tomorrowList.first.clouds.all}%',
+                                            TomorrowDetail(
+                                              icon: Icons.cloud,
+                                              label: 'Cloud Cover',
+                                              value:
+                                                  '${tomorrowList.first.clouds.all}%',
                                             ),
-                                            _buildDetailRow(
-                                              Icons.opacity,
-                                              'UV Index',
-                                              '–', // or 'N/A' if preferred
+                                            TomorrowDetail(
+                                              icon: Icons.opacity,
+                                              label: 'UV Index',
+                                              value:
+                                                  '–', // or 'N/A' if preferred
                                             ),
                                           ],
                                         )
