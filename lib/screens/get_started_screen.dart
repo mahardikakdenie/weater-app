@@ -36,8 +36,6 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
     final googleSignIn = GoogleSignIn();
     final currentUser = googleSignIn.currentUser;
 
-    debugPrint("crr : $currentUser");
-
     if (currentUser != null) {
       try {
         final auth = await currentUser.authentication;

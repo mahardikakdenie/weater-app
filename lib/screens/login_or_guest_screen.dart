@@ -78,7 +78,6 @@ class LoginOrGuestScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 48),
 
-                // 🔷 Login with Google — tetap emas, tapi dengan teks hitam yang jelas
                 ElevatedButton.icon(
                   onPressed: () => _signInWithGoogle(context),
                   icon: const Icon(Icons.login, color: Colors.black),
