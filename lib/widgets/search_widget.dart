@@ -145,9 +145,6 @@ class _SearchScreenState extends State<SearchScreen> {
                   itemCount: widget.savedFavorites.length,
                   itemBuilder: (context, index) {
                     final city = widget.savedFavorites[index];
-                    // final isFavorite = widget.favoriteCities?.contains(
-                    //   city.name,
-                    // );
                     return ListTile(
                       title: Text(
                         city.name,
@@ -171,12 +168,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 child: Column(
                   children: [
                     SizedBox(height: 20),
-                    Image.asset(
-                      'assets/building.png',
-                      width: 200,
-                      height: 200,
-                      // Opsional: pastikan ikon terlihat baik di dark mode
-                    ),
+                    Image.asset('assets/building.png', width: 200, height: 200),
                     const SizedBox(height: 20),
                     const Text(
                       'Ketik nama kota untuk mencari...',
