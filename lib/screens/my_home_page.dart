@@ -207,6 +207,7 @@ class _MyHomePageWithStateState extends State<MyHomePageWithState> {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       if (mounted) setState(() => _isFavorite = false);
+      debugPrint("isfavorite : $_isFavorite");
       return;
     }
     final querySnapshot = await _firestore
@@ -229,12 +230,6 @@ class _MyHomePageWithStateState extends State<MyHomePageWithState> {
     final useLon = lon ?? _currentLon;
 
     try {
-      // final response = await WeatherService.fetchWeatherData(
-      //   lat: useLat.toString(),
-      //   lon: useLon.toString(),
-      //   apiKey: 'ea5e57629b00206a154c5eeb3dade93e',
-      // );
-
       context.read<WeatherBloc>().add(
         SetWeatherData(
           lat: useLat,
@@ -312,7 +307,10 @@ class _MyHomePageWithStateState extends State<MyHomePageWithState> {
     }
   }
 
-  Future<void> _toggleFavorite({WeatherResponse? weatherData}) async {
+  Future<void> _toggleFavorite({
+    WeatherResponse? weatherData,
+    bool favoriteCity = false,
+  }) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -335,9 +333,9 @@ class _MyHomePageWithStateState extends State<MyHomePageWithState> {
         .collection('users')
         .doc(user.uid)
         .collection('favorites')
-        .doc(weatherData?.name);
+        .doc("${weatherData?.name}");
 
-    if (_isFavorite) {
+    if (favoriteCity) {
       await docRef.delete();
       if (mounted) setState(() => _isFavorite = false);
       setState(() {
@@ -494,8 +492,11 @@ class _MyHomePageWithStateState extends State<MyHomePageWithState> {
               child: HomeWidget(
                 userName: _userName,
                 userPhotoUrl: _userPhotoUrl,
-                onToggleFavorite: (data) async =>
-                    await _toggleFavorite(weatherData: data),
+                onToggleFavorite: (data, isFavorite) async =>
+                    await _toggleFavorite(
+                      weatherData: data,
+                      favoriteCity: isFavorite,
+                    ),
                 onLogout: _handleLogout,
               ),
             ),
