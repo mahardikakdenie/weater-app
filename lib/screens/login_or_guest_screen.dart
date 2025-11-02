@@ -104,7 +104,6 @@ class LoginOrGuestScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
 
-                // 🔸 Email login — teks putih lembut
                 TextButton(
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
