@@ -50,7 +50,7 @@ A modern, responsive weather application built with **Flutter**, powered by the 
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-username/weather_app.git
+   git clone https://github.com/mahardikakdenie/weater-app.git
    cd weather_app
    ```
 
