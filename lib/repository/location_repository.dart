@@ -1,3 +1,4 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:weather_app/model/location_model.dart';
 import 'package:weather_app/utils/dio_weather_client.dart';
 
@@ -13,7 +14,7 @@ class LocationRepository {
         queryParameters: {
           "q": search,
           "limit": limit,
-          'appid': "ea5e57629b00206a154c5eeb3dade93e",
+          'appid': dotenv.env['FLUTTER_BASE_API_WEATER'] as String,
         },
       );
 
