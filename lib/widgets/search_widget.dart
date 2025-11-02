@@ -13,7 +13,7 @@ class SearchScreen extends StatefulWidget {
   final Function(FavoriteCity) onAddFavorite;
   final Function(LocationModel) onAddCity;
   final Function(String) onRemoveCity;
-  final Function(String) onSearch; // <-- Tambahkan ini
+  final Function(String) onSearch;
 
   const SearchScreen({
     super.key,
@@ -25,7 +25,7 @@ class SearchScreen extends StatefulWidget {
     required this.onFavoriteSelected,
     required this.onAddCity,
     required this.onRemoveCity,
-    required this.onSearch, // <-- terima callback onSearch
+    required this.onSearch,
   });
 
   @override
@@ -39,8 +39,6 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   void initState() {
     super.initState();
-    // widget.filteredCities = _allCities;
-    // Tidak pakai listener langsung, tapi handle di TextField onChanged
   }
 
   @override
@@ -51,35 +49,11 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   void _onSearchTextChanged(String query) {
-    // Batalkan timer sebelumnya
     _debounceTimer?.cancel();
-
-    // Jika query kosong, reset daftar
-    if (query.isEmpty) {
-      // setState(() {
-      //   widget.filteredCities = _allCities;
-      // });
-      // return;
-    }
-
-    // Set timer 500ms
     _debounceTimer = Timer(const Duration(milliseconds: 500), () {
-      // Panggil API atau callback pencarian
       widget.onSearch(query);
-
-      // Opsional: jika kamu tetap ingin filter lokal (selain API),
-      // lakukan di sini setelah dapat hasil dari API.
-      // Tapi biasanya, untuk pencarian global, kamu ganti widget.filteredCities
-      // dengan hasil dari API, bukan dari _allCities.
     });
   }
-
-  // Method untuk update hasil dari luar (misalnya dari API)
-  // void updateSearchResults(List<String> results) {
-  //   setState(() {
-  //     widget.filteredCities = results;
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -139,9 +113,6 @@ class _SearchScreenState extends State<SearchScreen> {
                   itemCount: widget.filteredCities.length,
                   itemBuilder: (context, index) {
                     final city = widget.filteredCities[index];
-                    // final isFavorite = widget.favoriteCities?.contains(
-                    //   city.name,
-                    // );
                     return ListTile(
                       title: Text(
                         [city.name, city.state, city.country]
