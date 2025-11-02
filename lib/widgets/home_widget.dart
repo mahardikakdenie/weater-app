@@ -561,12 +561,16 @@ class _HomeWidgetState extends State<HomeWidget> {
                                                     CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
-                                                    StringExtension(
-                                                      tomorrowList
-                                                          .first
-                                                          .weather[0]
-                                                          .description,
-                                                    ).capitalize(),
+                                                    tomorrowList
+                                                        .first
+                                                        .weather[0]
+                                                        .description
+                                                        .split(" ")
+                                                        .map(
+                                                          (text) =>
+                                                              text.capitalize(),
+                                                        )
+                                                        .join(" "),
                                                     style: const TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 16,
@@ -712,9 +716,9 @@ class _HomeWidgetState extends State<HomeWidget> {
   }
 }
 
-extension StringExtension on String {
-  String capitalize() {
-    if (isEmpty) return this;
-    return '${this[0].toUpperCase()}${substring(1)}';
-  }
-}
+// extension StringExtension on String {
+//   String capitalize() {
+//     if (isEmpty) return this;
+//     return '${this[0].toUpperCase()}${substring(1)}';
+//   }
+// }
