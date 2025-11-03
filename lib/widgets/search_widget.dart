@@ -127,13 +127,14 @@ class _SearchScreenState extends State<SearchScreen> {
                         color: const Color(0xFF5D5FEF),
                       ),
                       onTap: () => {
+                        debugPrint("cirty from search : $city"),
                         widget.onCitySelected(city),
                         _searchController.text = '',
                       },
-                      trailing: IconButton(
-                        icon: const Icon(Icons.add, color: Colors.green),
-                        onPressed: () => widget.onAddCity(city),
-                      ),
+                      // trailing: IconButton(
+                      //   icon: const Icon(Icons.add, color: Colors.green),
+                      //   onPressed: () => widget.onAddCity(city),
+                      // ),
                     );
                   },
                 ),

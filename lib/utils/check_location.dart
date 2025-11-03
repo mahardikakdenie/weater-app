@@ -4,7 +4,7 @@ import 'package:geolocator/geolocator.dart';
 Future<void> getCurrentLocation() async {
   bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
   if (!serviceEnabled) {
-    debugPrint('Layanan lokasi tidak aktif.');
+    debugPrint('your service location is not active.');
     return;
   }
 
@@ -12,7 +12,7 @@ Future<void> getCurrentLocation() async {
   if (permission == LocationPermission.denied) {
     permission = await Geolocator.requestPermission();
     if (permission == LocationPermission.denied) {
-      debugPrint('Izin lokasi ditolak.');
+      debugPrint('location permission denied.');
       return;
     }
   }
@@ -30,7 +30,7 @@ Future<void> getCurrentLocation() async {
       debugPrint('Latitude: ${position.latitude}');
       debugPrint('Longitude: ${position.longitude}');
     } catch (e) {
-      debugPrint('Error mendapatkan lokasi: $e');
+      debugPrint('error fetched location: $e');
     }
   }
 }

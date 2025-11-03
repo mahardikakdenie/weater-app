@@ -197,7 +197,7 @@ class _MyHomePageWithStateState extends State<MyHomePageWithState> {
       await _fetchWeather();
       await _forecastWeather();
     } catch (e) {
-      debugPrint("Gagal ambil lokasi: $e");
+      debugPrint("failed fetch location: $e");
       await _fetchWeather();
       await _forecastWeather();
     }
@@ -351,9 +351,9 @@ class _MyHomePageWithStateState extends State<MyHomePageWithState> {
     } else {
       await docRef.set({
         'name': weatherData?.name,
-        'country': weather.sys?.country ?? '',
-        'lat': _currentLat,
-        'lon': _currentLon,
+        'country': weatherData?.sys?.country ?? '',
+        'lat': weatherData?.coord?.lat,
+        'lon': weatherData?.coord?.lon,
         "email": user.email,
         'addedAt': FieldValue.serverTimestamp(),
       });
@@ -362,8 +362,8 @@ class _MyHomePageWithStateState extends State<MyHomePageWithState> {
           FavoriteCity(
             id: docRef.id,
             name: weatherData?.name ?? '-',
-            lat: _currentLat,
-            lon: _currentLon,
+            lat: weatherData?.coord?.lat ?? _currentLat,
+            lon: weatherData?.coord?.lon ?? _currentLon,
           ),
         );
       });
