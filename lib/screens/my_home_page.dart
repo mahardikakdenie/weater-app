@@ -555,5 +555,3 @@ class _MyHomePageWithStateState extends State<MyHomePageWithState> {
 }
 
 // =============== EKSPOR UTAMA ===============
-// Ganti route utama kamu ke MyHomePage
-// Misal di main.dart: home: const MyHomePage()
